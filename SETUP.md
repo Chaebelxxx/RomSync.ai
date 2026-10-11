@@ -40,3 +40,6 @@ Only rows with Status = Ready are used.
 | 5 strikes in an hour | 30 minute pause for that visitor | No |
 | Handoff form | Saved to Redis, sent to Telegram and email | No |
 Limits per visitor (editable): 6 per minute, 30 per hour, 80 per day, 30 per conversation. Unrelated messages use two slots of the per-minute limit.
+
+## Backup AI (Groq)
+Get a free key at https://console.groq.com/keys and add it as `GROQ_API_KEY` in Vercel, then redeploy. The bot tries Gemini first and Groq second, one call per message. Each has its own daily cap (`GLOBAL_DAILY_LIMIT` for Gemini, `GROQ_DAILY_LIMIT` for Groq) and its own pause when it fails. Check your real Groq limits at console.groq.com/settings/limits and keep the caps below them. Groq's free tier also limits tokens per minute for everyone combined, so the bot sends it a shorter prompt (only the 8 most relevant FAQ entries).

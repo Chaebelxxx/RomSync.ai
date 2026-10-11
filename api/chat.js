@@ -1,9 +1,9 @@
 // POST /api/chat  { message, sessionId, history }  ->  { reply, actions, calendly?, degraded? }
 import { apiGate, json, clientIp, hashId, clean, stripAngles } from '../lib/util.js';
 import { validateChat, prefilter } from '../lib/guard.js';
-import { checkChatLimits, strike, penalize, breakerOpen, tripBreaker } from '../lib/limiter.js';
-import { SYSTEM_PROMPT, quickAnswer, searchFaq, replies, calendlyLink, sanitizeReply } from '../lib/kb.js';
-import { askGemini } from '../lib/gemini.js';
+import { checkChatLimits, strike, penalize } from '../lib/limiter.js';
+import { SYSTEM_PROMPT, compactPrompt, quickAnswer, searchFaq, replies, calendlyLink, sanitizeReply } from '../lib/kb.js';
+import { askLLM } from '../lib/llm.js';
 import { notifyOps } from '../lib/notify.js';
 import { cfg } from '../lib/config.js';
 
@@ -23,15 +23,12 @@ async function refuse(res, ip, kind, weight) {
   return json(res, 200, { reply, actions: [] });
 }
 
-// Gemini is down, rate limited or out of budget: answer from the FAQ if we can.
+// Every AI provider is down, paused or out of budget: answer from the FAQ if we can.
 async function degraded(res, message, outcome) {
-  if (['all_failed', 'auth', 'budget', 'billing'].includes(outcome.reason)) {
-    if (outcome.reason === 'all_failed') await tripBreaker(60);                              // stop hammering a failing API for a minute
-    if (outcome.reason === 'billing' || outcome.reason === 'auth') await tripBreaker(900);   // needs YOU to fix it: pause 15 minutes
-    const why = outcome.reason === 'billing'
-      ? 'Gemini says your prepaid credits are depleted (HTTP 402). Top up in AI Studio, or put a key from a project without billing in GEMINI_API_KEY.'
-      : `Chatbot is in limited mode (${outcome.reason}). ${(outcome.errors || []).join(', ')}`;
-    await notifyOps(`gemini-${outcome.reason}`, why).catch(() => {});
+  if (outcome.reason !== 'paused') { // 'paused' = we already alerted when the pause started
+    const billing = (outcome.reasons || []).some((r) => r.endsWith(':billing'));
+    const hint = billing ? ' A provider reports depleted credits: top up, or use a key from a project without billing.' : '';
+    await notifyOps('llm-down', `Chatbot is in limited mode. ${(outcome.reasons || []).join(', ')}.${hint} ${(outcome.errors || []).join(' | ')}`).catch(() => {});
   }
   const hit = searchFaq(message);
   if (hit) return json(res, 200, withCalendly({ reply: hit.a, actions: hit.handoff ? ['handoff'] : [], degraded: true }));
@@ -75,9 +72,7 @@ export default async function handler(req, res) {
     if (flag && flag.kind === 'phone') return json(res, 200, withCalendly({ reply: replies.phone(), actions: ['schedule', 'handoff'] }));
     if (flag) return refuse(res, ip, flag.kind, flag.weight);
 
-    const outcome = (await breakerOpen())
-      ? { ok: false, reason: 'breaker' }
-      : await askGemini({ system: SYSTEM_PROMPT, user: userTurn(v.history, v.message) });
+    const outcome = await askLLM({ full: SYSTEM_PROMPT, compact: () => compactPrompt(v.message), user: userTurn(v.history, v.message) });
     if (!outcome.ok) return degraded(res, v.message, outcome);
     if (outcome.blocked) return refuse(res, ip, 'offTopic', 2);
     return fromModel(res, ip, outcome.data);

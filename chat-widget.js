@@ -139,7 +139,7 @@
     const form = h('form', { class: 'rs-form', novalidate: '' },
       name, email, msg, hp,
       h('label', { class: 'rs-check' }, call, 'I would also like a call'),
-      h('div', { class: 'rs-note', text: "By sending, you agree that Rommel may contact you about your inquiry. Chat messages are processed by an AI service (Google Gemini). Please don't share passwords or sensitive data." }),
+      h('div', { class: 'rs-note', text: "By sending, you agree that Rommel may contact you about your inquiry. Chat messages are processed by AI services (Google Gemini or Groq). Please don't share passwords or sensitive data." }),
       status,
       h('div', { class: 'rs-row' }, submit, h('button', { class: 'rs-cta rs-alt', type: 'button', text: 'Cancel', onclick: () => { form.remove(); formOpen = false; } })));
     form.addEventListener('submit', async (e) => {

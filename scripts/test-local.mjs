@@ -3,11 +3,12 @@
 process.env.GEMINI_API_KEY = 'test-key';
 process.env.TELEGRAM_BOT_TOKEN = 'tg-token';
 process.env.TELEGRAM_CHAT_ID = '1';
+process.env.GROQ_API_KEY = 'groq-test';
 process.env.ALLOWED_ORIGINS = 'http://localhost:3000';
 process.env.GLOBAL_DAILY_LIMIT = '1000';
 for (const k of ['UPSTASH_REDIS_REST_URL', 'KV_REST_API_URL', 'RESEND_API_KEY']) delete process.env[k];
 
-const calls = []; let gemini = 'ok'; let telegramOk = true;
+const calls = []; let gemini = 'ok'; let groq = 'ok'; let telegramOk = true;
 globalThis.fetch = async (url) => {
   const u = String(url); calls.push(u);
   if (u.includes('generativelanguage')) {
@@ -19,6 +20,10 @@ globalThis.fetch = async (url) => {
       offtopic: { intent: 'off_topic', reply: '' },
     }[gemini];
     return new Response(JSON.stringify({ candidates: [{ finishReason: 'STOP', content: { parts: [{ text: JSON.stringify(payload) }] } }] }), { status: 200 });
+  }
+  if (u.includes('api.groq.com')) {
+    if (groq === '429') return new Response('{}', { status: 429 });
+    return new Response(JSON.stringify({ choices: [{ finish_reason: 'stop', message: { content: JSON.stringify({ intent: 'answer', reply: 'Groq answer about the services.', suggest_handoff: false }) } }] }), { status: 200 });
   }
   if (u.includes('api.telegram.org')) return new Response('{}', { status: telegramOk ? 200 : 500 });
   return new Response('{}', { status: 200 });
@@ -36,13 +41,6 @@ let fails = 0;
 const check = (name, ok) => { console.log(`${ok ? 'PASS' : 'FAIL'}  ${name}`); if (!ok) fails++; };
 
 let r, before;
-{
-  const { askGemini } = await import('../lib/gemini.js');
-  gemini = '402'; before = gemCalls();
-  const g = await askGemini({ system: 's', user: 'u' });
-  check('402 (credits depleted) is reported as billing and stops after one call', g.reason === 'billing' && gemCalls() === before + 1);
-  gemini = 'ok';
-}
 before = gemCalls(); r = await msg('Pricing', '1.1.1.1');
 check('quick reply "Pricing" answers locally with $50 and no Gemini call', r.status === 200 && r.body.reply.includes('$50') && gemCalls() === before);
 before = gemCalls(); r = await msg('price', '1.1.0.9');
@@ -80,7 +78,9 @@ check('over-long message is rejected (400)', r.status === 400);
 r = await run(chat, { message: 'hi there', sessionId: 'sess-origin1' }, '1.1.2.2', { origin: 'https://evil.com' });
 check('request from another website is rejected (403)', r.status === 403);
 
-gemini = '429'; r = await msg('how much do you charge?', '1.1.3.1');
+gemini = '402'; before = gemCalls(); r = await msg('Do you offer ongoing maintenance for automations?', '1.1.3.0');
+check('Gemini out of credits (402): Groq answers instead, after only one Gemini call', r.body.reply.includes('Groq answer') && r.body.degraded !== true && gemCalls() === before + 1);
+gemini = '429'; groq = '429'; r = await msg('how much do you charge?', '1.1.3.1');
 check('Gemini 429 on every model: FAQ answer is returned in limited mode', r.status === 200 && r.body.degraded === true && r.body.reply.includes('$50'));
 check('an alert was sent to Telegram when Gemini failed', calls.some((c) => c.includes('api.telegram.org')));
 before = gemCalls(); r = await msg('what do you think about quantum computing hardware', '1.1.3.2');
