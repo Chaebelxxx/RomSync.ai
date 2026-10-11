@@ -68,6 +68,7 @@ export default async function handler(req, res) {
     if (quick) return json(res, 200, withCalendly(quick));
 
     const flag = prefilter(v.message);                          // gibberish, injection, private, off-topic
+    if (flag && flag.kind === 'phone') return json(res, 200, withCalendly({ reply: replies.phone(), actions: ['schedule', 'handoff'] }));
     if (flag) return refuse(res, ip, flag.kind, flag.weight);
 
     const outcome = (await breakerOpen())
