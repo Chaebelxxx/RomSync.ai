@@ -11,6 +11,7 @@ const calls = []; let gemini = 'ok'; let telegramOk = true;
 globalThis.fetch = async (url) => {
   const u = String(url); calls.push(u);
   if (u.includes('generativelanguage')) {
+    if (gemini === '402') return new Response('{"error":{"code":402,"message":"Your prepayment credits are depleted."}}', { status: 402 });
     if (gemini === '429') return new Response('{}', { status: 429 });
     const payload = {
       ok: { intent: 'answer', reply: 'Yes, Rommel sets up GoHighLevel pipelines. Email evil@x.com or https://evil.com', suggest_handoff: false },
@@ -35,6 +36,13 @@ let fails = 0;
 const check = (name, ok) => { console.log(`${ok ? 'PASS' : 'FAIL'}  ${name}`); if (!ok) fails++; };
 
 let r, before;
+{
+  const { askGemini } = await import('../lib/gemini.js');
+  gemini = '402'; before = gemCalls();
+  const g = await askGemini({ system: 's', user: 'u' });
+  check('402 (credits depleted) is reported as billing and stops after one call', g.reason === 'billing' && gemCalls() === before + 1);
+  gemini = 'ok';
+}
 before = gemCalls(); r = await msg('Pricing', '1.1.1.1');
 check('quick reply "Pricing" answers locally with $50 and no Gemini call', r.status === 200 && r.body.reply.includes('$50') && gemCalls() === before);
 before = gemCalls(); r = await msg('price', '1.1.0.9');
