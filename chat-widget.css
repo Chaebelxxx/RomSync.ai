@@ -1,0 +1,35 @@
+/* Chat widget styles. Uses your site's colour variables (--red, --panel, --text ...) with fallbacks. */
+.rs-fab,.rs-panel,.rs-panel *{box-sizing:border-box}
+.rs-fab[hidden],.rs-panel[hidden]{display:none!important}
+.rs-fab{position:fixed;right:20px;bottom:calc(20px + env(safe-area-inset-bottom,0px));z-index:50;padding:14px 24px;border:0;border-radius:999px;background:var(--red,#c42b31);color:#fff;font:600 .95rem var(--font,system-ui,sans-serif);cursor:pointer;box-shadow:0 10px 30px rgba(0,0,0,.5);transition:transform .2s,background .2s}
+.rs-fab:hover{transform:translateY(-2px) scale(1.04);background:#d9363c}
+.rs-fab:focus-visible,.rs-panel button:focus-visible,.rs-panel a:focus-visible,.rs-panel input:focus-visible,.rs-panel textarea:focus-visible{outline:2px solid var(--accent,#e8474c);outline-offset:2px}
+.rs-panel{position:fixed;right:20px;bottom:calc(20px + env(safe-area-inset-bottom,0px));z-index:60;width:min(390px,calc(100vw - 24px));height:min(580px,calc(100dvh - 40px));display:flex;flex-direction:column;background:var(--panel,#150e0f);color:var(--text,#f4f1f0);border:1px solid var(--line,rgba(255,255,255,.12));border-radius:18px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.6);font:.92rem/1.5 var(--font,system-ui,sans-serif)}
+.rs-head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid var(--line,rgba(255,255,255,.12));background:rgba(196,43,49,.12)}
+.rs-head small{display:block;color:var(--muted,#a39a9a);font-size:.75rem}
+.rs-x{background:none;border:0;color:inherit;font-size:1.6rem;line-height:1;cursor:pointer;padding:0 6px}
+.rs-log{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px}
+.rs-msg{max-width:88%;padding:10px 13px;border-radius:14px;white-space:pre-wrap;overflow-wrap:anywhere}
+.rs-bot{align-self:flex-start;background:rgba(255,255,255,.07);border-bottom-left-radius:4px}
+.rs-user{align-self:flex-end;background:var(--red,#c42b31);color:#fff;border-bottom-right-radius:4px}
+.rs-typing{opacity:.7;font-style:italic}
+.rs-msg a{color:var(--accent,#e8474c);text-decoration:underline}
+.rs-user a{color:#fff}
+.rs-chips,.rs-actions{display:flex;flex-wrap:wrap;gap:8px}
+.rs-chips button{padding:7px 14px;border-radius:999px;border:1px solid var(--line,rgba(255,255,255,.2));background:transparent;color:inherit;font:inherit;cursor:pointer;transition:background .15s,border-color .15s}
+.rs-chips button:hover{background:rgba(196,43,49,.2);border-color:var(--red,#c42b31)}
+.rs-cta{display:inline-block;padding:9px 16px;border-radius:10px;border:1px solid var(--red,#c42b31);background:var(--red,#c42b31);color:#fff!important;font:600 .88rem var(--font,system-ui,sans-serif);text-decoration:none!important;cursor:pointer}
+.rs-cta.rs-alt{background:transparent;color:var(--text,#f4f1f0)!important;border-color:var(--line,rgba(255,255,255,.3))}
+.rs-foot{display:flex;gap:8px;padding:10px;border-top:1px solid var(--line,rgba(255,255,255,.12))}
+.rs-input{flex:1;resize:none;max-height:90px;padding:10px 12px;border-radius:10px;border:1px solid var(--line,rgba(255,255,255,.2));background:var(--bg,#0c0809);color:inherit;font:inherit}
+.rs-send{padding:0 16px;border:0;border-radius:10px;background:var(--red,#c42b31);color:#fff;font:600 .9rem var(--font,system-ui,sans-serif);cursor:pointer}
+.rs-input:disabled,.rs-send:disabled{opacity:.5;cursor:not-allowed}
+.rs-form{display:flex;flex-direction:column;gap:8px;padding:12px;border:1px solid var(--line,rgba(255,255,255,.2));border-radius:12px;background:rgba(255,255,255,.04)}
+.rs-form input[type=text],.rs-form input[type=email],.rs-form textarea{width:100%;padding:9px 11px;border-radius:8px;border:1px solid var(--line,rgba(255,255,255,.2));background:var(--bg,#0c0809);color:inherit;font:inherit}
+.rs-form label.rs-check{display:flex;gap:8px;align-items:center;font-size:.85rem}
+.rs-form .rs-note{font-size:.72rem;color:var(--muted,#a39a9a);line-height:1.4}
+.rs-form .rs-status{font-size:.82rem;min-height:1.1em}
+.rs-form .rs-row{display:flex;gap:8px}
+.rs-hp{position:absolute!important;left:-9999px!important;width:1px;height:1px;opacity:0}
+@media(max-width:480px){.rs-panel{right:0;bottom:0;width:100vw;height:100dvh;border-radius:0}.rs-fab{right:14px}}
+@media(prefers-reduced-motion:reduce){.rs-fab{transition:none}}

@@ -1,0 +1,12 @@
+{
+  "name": "romsync-portfolio",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "dev": "vercel dev",
+    "build-kb": "node scripts/build-kb.mjs",
+    "test:local": "node scripts/test-local.mjs"
+  },
+  "devDependencies": { "exceljs": "^4.4.0" }
+}
