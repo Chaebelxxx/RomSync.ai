@@ -37,6 +37,8 @@ const check = (name, ok) => { console.log(`${ok ? 'PASS' : 'FAIL'}  ${name}`); i
 let r, before;
 before = gemCalls(); r = await msg('Pricing', '1.1.1.1');
 check('quick reply "Pricing" answers locally with $50 and no Gemini call', r.status === 200 && r.body.reply.includes('$50') && gemCalls() === before);
+before = gemCalls(); r = await msg('price', '1.1.0.9');
+check('one-word "price" is answered locally with the pricing FAQ, no Gemini call', r.body.reply.includes('$50') && gemCalls() === before);
 before = gemCalls(); r = await msg('asdfghjkl', '1.1.1.2');
 check('keyboard-mash is refused politely, no Gemini call', r.body.reply.includes('rephrase') && gemCalls() === before);
 before = gemCalls(); r = await msg("what is rommel's phone number?", '1.1.1.3');
@@ -75,6 +77,9 @@ check('Gemini 429 on every model: FAQ answer is returned in limited mode', r.sta
 check('an alert was sent to Telegram when Gemini failed', calls.some((c) => c.includes('api.telegram.org')));
 before = gemCalls(); r = await msg('what do you think about quantum computing hardware', '1.1.3.2');
 check('circuit breaker skips Gemini and shows the friendly fallback', gemCalls() === before && r.body.degraded === true && r.body.actions.includes('handoff'));
+
+r = await msg('paypal?', '1.1.3.3');
+check('limited mode still answers a one-word keyword question from the FAQ', r.body.degraded === true && !r.body.reply.includes('trouble answering'));
 
 const lead = { name: 'Maria', email: 'maria@example.com', message: 'I need lead generation automation', wantsMeeting: true, sessionId: 'sess-handoff1', website: '', elapsedMs: 9000, transcript: [{ role: 'user', text: 'hi' }] };
 before = calls.filter((c) => c.includes('telegram')).length;
