@@ -19,6 +19,7 @@
 
   const history = [];
   let busy = false; let lockTimer = null; let formOpen = false; let lastUser = '';
+  let handoffDone = false; let ctaCooldown = 0;   // show the "send my details" button sparingly
 
   // Small helper to build elements. Text is always set with textContent, never innerHTML (prevents XSS).
   const h = (tag, props = {}, ...kids) => {
@@ -89,9 +90,13 @@
     lockTimer = setTimeout(() => { lockTimer = null; setDisabled(false); }, s * 1000);
   }
 
-  function actionEls(data) {
+  function actionEls(data, force) {
     const acts = data.actions || []; const els = [];
-    if (acts.includes('handoff')) els.push(h('button', { class: 'rs-cta', type: 'button', text: 'Send my details to Rommel', onclick: openForm }));
+    if (ctaCooldown > 0) ctaCooldown--;
+    if (acts.includes('handoff') && !handoffDone && (force || ctaCooldown <= 0)) {
+      els.push(h('button', { class: 'rs-cta', type: 'button', text: 'Send my details to Rommel', onclick: openForm }));
+      ctaCooldown = 3;
+    }
     if (acts.includes('schedule') && data.calendly) els.push(h('a', { class: 'rs-cta rs-alt', href: data.calendly, target: '_blank', rel: 'noopener noreferrer', text: 'Book a free 30-min call' }));
     return els.length ? [h('div', { class: 'rs-actions' }, els)] : [];
   }
@@ -115,7 +120,7 @@
       typing.remove();
       const reply = data.reply || `Something went wrong. Please try again, or email ${EMAIL}.`;
       history.push({ role: 'user', text }, { role: 'assistant', text: reply });
-      addMsg('bot', reply, actionEls(data));
+      addMsg('bot', reply, actionEls(data, QUICK.includes(text)));
       if (r.status === 429) lock(data.retryAfter);
     } catch (e) {
       typing.remove();
@@ -154,7 +159,8 @@
         });
         const data = await r.json().catch(() => ({}));
         if (data.ok) {
-          form.remove(); formOpen = false;
+          form.remove(); formOpen = false; handoffDone = true;
+          history.push({ role: 'assistant', text: '(The visitor has already sent their details to Rommel through the form.)' });
           addMsg('bot', data.reply || 'Thanks! I have passed this to Rommel.', data.calendly ? actionEls({ actions: ['schedule'], calendly: data.calendly }) : []);
         } else { status.textContent = data.reply || `Could not send. Please email ${EMAIL}.`; submit.disabled = false; }
       } catch (err) { status.textContent = `Network problem. Please email ${EMAIL}.`; submit.disabled = false; }

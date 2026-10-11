@@ -43,6 +43,10 @@ const check = (name, ok) => { console.log(`${ok ? 'PASS' : 'FAIL'}  ${name}`); i
 let r, before;
 before = gemCalls(); r = await msg('Pricing', '1.1.1.1');
 check('quick reply "Pricing" answers locally with $50 and no Gemini call', r.status === 200 && r.body.reply.includes('$50') && gemCalls() === before);
+before = gemCalls(); r = await msg('are you gemini or groq?', '1.1.0.8');
+check('"are you gemini or groq?" is answered honestly and locally, no Gemini call', r.body.reply.includes('AI assistant') && r.body.reply.includes('Groq') && gemCalls() === before);
+r = await msg('are you available for new projects?', '1.1.0.7');
+check('"are you available..." is NOT mistaken for a question about the bot', !r.body.reply.includes('set up by Rommel'));
 before = gemCalls(); r = await msg('price', '1.1.0.9');
 check('one-word "price" is answered locally with the pricing FAQ, no Gemini call', r.body.reply.includes('$50') && gemCalls() === before);
 before = gemCalls(); r = await msg('asdfghjkl', '1.1.1.2');
