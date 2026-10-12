@@ -7,6 +7,19 @@
 <link rel="icon" href="logo.svg" type="image/svg+xml">
 <link rel="stylesheet" href="chat-widget.css">
 <meta name="description" content="Rommel Dela Torre builds AI automation workflows and web systems for businesses. Based in Bulacan, Philippines.">
+<link rel="canonical" href="https://romsyncai.vercel.app/">
+<meta name="theme-color" content="#0c0809">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="RomSync.ai">
+<meta property="og:title" content="RomSync.ai | Rommel Dela Torre, AI Automation &amp; Web Developer">
+<meta property="og:description" content="Rommel Dela Torre builds AI automation workflows and web systems for businesses. Based in Bulacan, Philippines.">
+<meta property="og:url" content="https://romsyncai.vercel.app/">
+<meta property="og:image" content="https://romsyncai.vercel.app/photo.jpg">
+<meta property="og:image:alt" content="Photo of Rommel Dela Torre">
+<meta name="twitter:card" content="summary">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"Person","name":"Rommel Dela Torre","jobTitle":"AI Automation & Web Developer","url":"https://romsyncai.vercel.app/","image":"https://romsyncai.vercel.app/photo.jpg","sameAs":["https://www.linkedin.com/in/rommel-dela-torre"],"address":{"@type":"PostalAddress","addressLocality":"Plaridel","addressRegion":"Bulacan","addressCountry":"PH"}}
+</script>
 <style>
 /* ========== 1. COLORS & FONTS (change these first) ========== */
 :root{
@@ -48,7 +61,7 @@ nav .wrap{display:flex;align-items:center;justify-content:space-between;height:6
 .btn-sm{padding:9px 18px;font-size:.9rem;border-radius:9px}
 
 /* ========== 5. HERO ========== */
-.hero{min-height:100vh;display:flex;align-items:center;text-align:center;padding:120px 0 80px;
+.hero{min-height:100vh;min-height:100dvh;display:flex;align-items:center;text-align:center;padding:120px 0 80px;
   background:radial-gradient(ellipse 60% 50% at 50% 35%,rgba(196,43,49,.2),transparent 70%)}
 .badge{display:inline-block;padding:7px 18px;border:1px solid rgba(196,43,49,.5);background:rgba(196,43,49,.12);color:var(--accent);border-radius:999px;font-size:.88rem;margin-bottom:28px}
 .hero h1{font-size:clamp(2.6rem,8vw,5.2rem);line-height:1.05;letter-spacing:-.03em;margin-bottom:24px}
@@ -68,7 +81,7 @@ nav .wrap{display:flex;align-items:center;justify-content:space-between;height:6
 /* ========== 6. ABOUT & SKILLS ========== */
 .about{display:grid;grid-template-columns:1.1fr 1fr;gap:32px;align-items:stretch}
 .about-left{display:flex;flex-direction:column;gap:24px}
-.about-left .card:first-child{flex:1; display:flex;flex-direction:column;justify-content:center; text-align:justify}
+.about-left .card:first-child{flex:1; display:flex;flex-direction:column;justify-content:center;text-align:justify;hyphens:auto}
 .skills{display:flex;flex-direction:column;justify-content:space-between;gap:24px}
 .card{background:var(--panel);border:1px solid var(--line);border-radius:50px;padding:50px}
 .card p{color:#cfc9c1;margin-bottom:16px}
@@ -95,7 +108,7 @@ nav .wrap{display:flex;align-items:center;justify-content:space-between;height:6
 /* Hover animation: card grows slightly, gets a red border and shadow */
 .project.reveal.show:hover,.project.reveal.show:focus-visible{transform:scale(1.025);border-color:rgba(196,43,49,.7);box-shadow:0 18px 50px rgba(0,0,0,.55)}
 .project h3{font-size:1.2rem;letter-spacing:-.01em;margin-bottom:14px}
-.project .detail p{color:#cfc9c1;margin-bottom:12px}
+.project .detail p{color:#cfc9c1;margin-bottom:12px;text-align:justify;hyphens:auto}
 .project .detail p:last-child{margin-bottom:0}
 .project .detail strong{color:var(--accent)}
 .thumb{position:relative;aspect-ratio:16/10;background:var(--bg);border:1px solid var(--line);border-radius:12px;overflow:hidden}
@@ -160,7 +173,7 @@ footer{text-align:center;color:var(--muted);font-size:.85rem;padding:28px 0}
       <a href="#projects">Projects</a>
       <a href="#experience">Experience</a>
       <a href="#contact">Contact</a>
-      <a class="btn btn-main btn-sm" href="mailto:rommeldelatorre8@gmail.com" target="_blank" >Get in touch</a>
+      <a class="btn btn-main btn-sm" href="mailto:rommeldelatorre8@gmail.com">Get in touch</a>
     </div>
   </div>
 </nav>
@@ -173,9 +186,9 @@ footer{text-align:center;color:var(--muted);font-size:.85rem;padding:28px 0}
     <span class="badge">AI Automation &amp; Web Developer</span>
     <h1>Rommel <em>Dela Torre</em></h1>
     <p class="lead">I build automation workflows and web systems that save businesses time.</p>
-    <p class="sub">From lead generation pipelines to inventory and HR systems, I turn repetitive work into automated processes.</p>
+    <p class="sub">From lead pipelines to inventory and HR systems, I turn repetitive work into automated processes.</p>
     <div class="cta">
-      <a class="btn btn-main" href="mailto:rommeldelatorre8@gmail.com" target="_blank">Get in touch</a>
+      <a class="btn btn-main" href="mailto:rommeldelatorre8@gmail.com">Get in touch</a>
       <a class="btn btn-ghost" href="#projects">View my work</a>
     </div>
   </div>
@@ -209,40 +222,40 @@ footer{text-align:center;color:var(--muted);font-size:.85rem;padding:28px 0}
   <div class="group">
   <h3 class="cat"><span>&lt;&gt;</span>Automation</h3>
   <ul class="chips">
-    <li><img src="https://cdn.simpleicons.org/n8n/EA4B71" alt="" onerror="this.remove()">n8n</li>
-    <li><img src="https://www.google.com/s2/favicons?domain=gohighlevel.com&sz=64" alt="" onerror="this.remove()">GoHighLevel</li>
-    <li><img class="inv" src="https://cdn.jsdelivr.net/npm/lucide-static/icons/plug.svg" alt="" onerror="this.remove()">API Integration</li>
-    <li><img class="inv" src="https://cdn.jsdelivr.net/npm/lucide-static/icons/sparkles.svg" alt="" onerror="this.remove()">AI Automation</li>
+    <li><img src="images/icons/n8n.svg" alt="" onerror="this.remove()">n8n</li>
+    <li><img src="images/icons/ghl.svg" alt="" onerror="this.remove()">GoHighLevel</li>
+    <li><img src="images/icons/plug.svg" alt="" onerror="this.remove()">API Integration</li>
+    <li><img src="images/icons/sparkles.svg" alt="" onerror="this.remove()">AI Automation</li>
   </ul>
   </div>
 
   <div class="group">
   <h3 class="cat"><span>&lt;&gt;</span>Web Development</h3>
   <ul class="chips">
-    <li><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/html5/html5-original.svg" alt="" onerror="this.remove()">HTML</li>
-    <li><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/css3/css3-original.svg" alt="" onerror="this.remove()">CSS</li>
-    <li><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg" alt="" onerror="this.remove()">JavaScript <small>basic</small></li>
-    <li><img class="inv" src="https://cdn.jsdelivr.net/npm/lucide-static/icons/wand-sparkles.svg" alt="" onerror="this.remove()">AI-assisted development</li>
+    <li><img src="images/icons/html5.svg" alt="" onerror="this.remove()">HTML</li>
+    <li><img src="images/icons/css3.svg" alt="" onerror="this.remove()">CSS</li>
+    <li><img src="images/icons/javascript.svg" alt="" onerror="this.remove()">JavaScript <small>basic</small></li>
+    <li><img src="images/icons/wand-sparkles.svg" alt="" onerror="this.remove()">AI-assisted development</li>
   </ul>
   </div>
 
   <div class="group">
   <h3 class="cat"><span>&lt;&gt;</span>Database &amp; Cloud</h3>
   <ul class="chips">
-    <li><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/postgresql/postgresql-original.svg" alt="" onerror="this.remove()">PostgreSQL</li>
-    <li><img class="inv" src="https://cdn.jsdelivr.net/npm/lucide-static/icons/database.svg" alt="" onerror="this.remove()">SQL <small>basic</small></li>
-    <li><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/supabase/supabase-original.svg" alt="" onerror="this.remove()">Supabase</li>
-    <li><img src="https://cdn.simpleicons.org/render/ffffff" alt="" onerror="this.remove()">Render</li>
-    <li><img class="inv" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/vercel/vercel-original.svg" alt="" onerror="this.remove()">Vercel</li>
+    <li><img src="images/icons/postgresql.svg" alt="" onerror="this.remove()">PostgreSQL</li>
+    <li><img src="images/icons/database.svg" alt="" onerror="this.remove()">SQL <small>basic</small></li>
+    <li><img src="images/icons/supabase.svg" alt="" onerror="this.remove()">Supabase</li>
+    <li><img src="images/icons/render.svg" alt="" onerror="this.remove()">Render</li>
+    <li><img class="inv" src="images/icons/vercel.svg" alt="" onerror="this.remove()">Vercel</li>
   </ul>
   </div>
 
   <div class="group">
   <h3 class="cat"><span>&lt;&gt;</span>Tools</h3>
   <ul class="chips">
-    <li><img class="inv" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg" alt="" onerror="this.remove()">GitHub</li>
-    <li><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/vscode/vscode-original.svg" alt="" onerror="this.remove()">VS Code</li>
-    <li><img src="https://www.google.com/s2/favicons?domain=pgadmin.org&sz=64" alt="" onerror="this.remove()">pgAdmin</li>
+    <li><img class="inv" src="images/icons/github.svg" alt="" onerror="this.remove()">GitHub</li>
+    <li><img src="images/icons/vscode.svg" alt="" onerror="this.remove()">VS Code</li>
+    <li><img src="images/icons/server.svg" alt="" onerror="this.remove()">pgAdmin</li>
   </ul>
   </div>
       </div>
@@ -281,7 +294,7 @@ footer{text-align:center;color:var(--muted);font-size:.85rem;padding:28px 0}
 
     <p><strong>Solution:</strong> Built a self-hosted n8n workflow using Docker that monitors Gmail on a scheduled interval, extracts sender information into Google Sheets, and automatically downloads email attachments into a structured Google Drive hierarchy organized by label, date, and sender. Implemented conditional find-or-create logic to prevent duplicate folders across repeated runs.</p>
 
-    <p><strong>Tech Stack:</strong> n8n, Docker, Gmail API, Google Sheets API, Google Drive API</p>
+    <p><strong>Tech stack:</strong> n8n, Docker, Gmail API, Google Sheets API, Google Drive API</p>
   </div>
 </article>
 
@@ -347,7 +360,7 @@ footer{text-align:center;color:var(--muted);font-size:.85rem;padding:28px 0}
 
     <p><strong>Solution:</strong> Contributed to the development and maintenance of a React-based Human Resource Information System (HRIS) during my Web Development & IT Sales Internship at Highly Succeed Inc. Worked across frontend development, backend functionality, and PostgreSQL database updates to support the application's features and data management.</p>
 
-    <p><strong>Tech Stack:</strong> React, PostgreSQL, Supabase, Render, Vercel, GitHub</p>
+    <p><strong>Tech stack:</strong> React, PostgreSQL, Supabase, Render, Vercel, GitHub</p>
   </div>
 </article>
 
@@ -402,7 +415,8 @@ footer{text-align:center;color:var(--muted);font-size:.85rem;padding:28px 0}
     <h2>Let's work together</h2>
     <p>Have a process you want to automate or a system you need built? Send me a message.</p>
     <div class="cta">
-      <a class="btn btn-main" href="mailto:rommeldelatorre8@gmail.com">Email me</a>
+      <a class="btn btn-main" href="https://calendly.com/rommeldelatorre8/30min" target="_blank" rel="noopener">Book a 30-min call</a>
+      <a class="btn btn-ghost" href="mailto:rommeldelatorre8@gmail.com">Get in touch</a>
       <a class="btn btn-ghost" href="https://www.linkedin.com/in/rommel-dela-torre" target="_blank" rel="noopener">LinkedIn</a>
     </div>
   </div>

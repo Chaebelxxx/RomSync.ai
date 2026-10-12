@@ -146,7 +146,7 @@
       h('label', { class: 'rs-check' }, call, 'I would also like a call'),
       h('div', { class: 'rs-note', text: "By sending, you agree that Rommel may contact you about your inquiry. Chat messages are processed by AI services (Google Gemini or Groq). Please don't share passwords or sensitive data." }),
       status,
-      h('div', { class: 'rs-row' }, submit, h('button', { class: 'rs-cta rs-alt', type: 'button', text: 'Cancel', onclick: () => { form.remove(); formOpen = false; } })));
+      h('div', { class: 'rs-row' }, submit, h('button', { class: 'rs-cta rs-alt', type: 'button', text: 'Cancel', onclick: () => { form.remove(); formOpen = false; input.focus(); } })));
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
       if (!name.value.trim() || !/^\S+@\S+\.\S+$/.test(email.value.trim()) || msg.value.trim().length < 5) { status.textContent = 'Please fill in your name, a valid email and a short message.'; return; }
@@ -159,7 +159,7 @@
         });
         const data = await r.json().catch(() => ({}));
         if (data.ok) {
-          form.remove(); formOpen = false; handoffDone = true;
+          form.remove(); formOpen = false; handoffDone = true; input.focus();
           history.push({ role: 'assistant', text: '(The visitor has already sent their details to Rommel through the form.)' });
           addMsg('bot', data.reply || 'Thanks! I have passed this to Rommel.', data.calendly ? actionEls({ actions: ['schedule'], calendly: data.calendly }) : []);
         } else { status.textContent = data.reply || `Could not send. Please email ${EMAIL}.`; submit.disabled = false; }
