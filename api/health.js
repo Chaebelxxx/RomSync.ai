@@ -2,7 +2,7 @@
 // Disabled (404) unless you set the HEALTH_TOKEN environment variable. Remove that variable when you are done.
 import { cfg } from '../lib/config.js';
 import { json } from '../lib/util.js';
-import { probeAll } from '../lib/llm.js';
+import { probeAll, listAvailable } from '../lib/llm.js';
 
 export default async function handler(req, res) {
   const token = process.env.HEALTH_TOKEN;
@@ -10,5 +10,6 @@ export default async function handler(req, res) {
   json(res, 200, {
     settings: { gemini: Boolean(cfg.geminiKey), groq: Boolean(cfg.groqKey), telegram: Boolean(cfg.tgToken && cfg.tgChat), resend: Boolean(cfg.resendKey), redis: Boolean(cfg.redisUrl && cfg.redisToken) },
     models: await probeAll(),
+    available: await listAvailable(), // model IDs your keys can use: copy working ones into GEMINI_MODELS / GROQ_MODELS
   });
 }

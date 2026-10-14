@@ -9,20 +9,22 @@ process.env.GLOBAL_DAILY_LIMIT = '1000';
 for (const k of ['UPSTASH_REDIS_REST_URL', 'KV_REST_API_URL', 'RESEND_API_KEY']) delete process.env[k];
 
 const calls = []; let gemini = 'ok'; let groq = 'ok'; let telegramOk = true;
-globalThis.fetch = async (url) => {
+globalThis.fetch = async (url, opts) => {
   const u = String(url); calls.push(u);
   if (u.includes('generativelanguage')) {
+    if (gemini === 'slowlite' && u.includes('flash-lite')) { const e = new Error('aborted'); e.name = 'AbortError'; throw e; }
     if (gemini === '402') return new Response('{"error":{"code":402,"message":"Your prepayment credits are depleted."}}', { status: 402 });
     if (gemini === '429') return new Response('{}', { status: 429 });
     const payload = {
       ok: { intent: 'answer', reply: 'Yes, Rommel sets up GoHighLevel pipelines. Email evil@x.com or https://evil.com', suggest_handoff: false },
       unknown: { intent: 'unknown', reply: '', suggest_handoff: true },
       offtopic: { intent: 'off_topic', reply: '' },
-    }[gemini];
+    }[gemini === 'slowlite' ? 'ok' : gemini];
     return new Response(JSON.stringify({ candidates: [{ finishReason: 'STOP', content: { parts: [{ text: JSON.stringify(payload) }] } }] }), { status: 200 });
   }
   if (u.includes('api.groq.com')) {
     if (groq === '429') return new Response('{}', { status: 429 });
+    if (groq === 'jsonfail' && JSON.parse(opts.body).response_format) return new Response('{"error":{"message":"Failed to generate JSON"}}', { status: 400 });
     return new Response(JSON.stringify({ choices: [{ finish_reason: 'stop', message: { content: JSON.stringify({ intent: 'answer', reply: 'Groq answer about the services.', suggest_handoff: false }) } }] }), { status: 200 });
   }
   if (u.includes('api.telegram.org')) return new Response('{}', { status: telegramOk ? 200 : 500 });
@@ -82,8 +84,12 @@ check('over-long message is rejected (400)', r.status === 400);
 r = await run(chat, { message: 'hi there', sessionId: 'sess-origin1' }, '1.1.2.2', { origin: 'https://evil.com' });
 check('request from another website is rejected (403)', r.status === 403);
 
+gemini = 'slowlite'; before = gemCalls(); r = await msg('Do you do GoHighLevel setup for agencies?', '1.1.2.9');
+check('first Gemini model times out: the second model is tried and answers', r.body.reply.includes('GoHighLevel') && r.body.degraded !== true && gemCalls() === before + 2);
 gemini = '402'; before = gemCalls(); r = await msg('Do you offer ongoing maintenance for automations?', '1.1.3.0');
 check('Gemini out of credits (402): Groq answers instead, after only one Gemini call', r.body.reply.includes('Groq answer') && r.body.degraded !== true && gemCalls() === before + 1);
+gemini = 'ok'; groq = 'jsonfail'; r = await msg('Can you automate invoice reminders for my shop?', '1.1.3.05');
+check('Groq model rejects JSON mode: it is retried without it and answers', r.body.reply.includes('Groq answer') && r.body.degraded !== true);
 gemini = '429'; groq = '429'; r = await msg('how much do you charge?', '1.1.3.1');
 check('Gemini 429 on every model: FAQ answer is returned in limited mode', r.status === 200 && r.body.degraded === true && r.body.reply.includes('$50'));
 check('an alert was sent to Telegram when Gemini failed', calls.some((c) => c.includes('api.telegram.org')));
