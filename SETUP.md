@@ -43,3 +43,6 @@ Limits per visitor (editable): 6 per minute, 30 per hour, 80 per day, 30 per con
 
 ## Backup AI (Groq)
 Get a free key at https://console.groq.com/keys and add it as `GROQ_API_KEY` in Vercel, then redeploy. The bot tries Gemini first and Groq second, one call per message. Each has its own daily cap (`GLOBAL_DAILY_LIMIT` for Gemini, `GROQ_DAILY_LIMIT` for Groq) and its own pause when it fails. Check your real Groq limits at console.groq.com/settings/limits and keep the caps below them. Groq's free tier also limits tokens per minute for everyone combined, so the bot sends it a shorter prompt (only the 8 most relevant FAQ entries).
+
+## Third AI (OpenRouter)
+Add `OPENROUTER_API_KEY` in Vercel (never in code or chat), set `OPENROUTER_MODELS` to IDs ending in `:free` shown under `openrouter_free` on `/api/health`, and redeploy. Order of attempts: Gemini, Groq, OpenRouter, then the FAQ. OpenRouter's free models allow 20 requests a minute and 50 a day (1,000 a day once you have bought $10 of credits), shared across your whole account; extra keys do not add capacity. By default requests ask OpenRouter to use only providers that do not log prompts. If every free model then fails with a "data policy" error, you must choose between `OPENROUTER_ALLOW_DATA_COLLECTION=true` and skipping OpenRouter.

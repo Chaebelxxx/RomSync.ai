@@ -4,15 +4,16 @@ process.env.GEMINI_API_KEY = 'test-key';
 process.env.TELEGRAM_BOT_TOKEN = 'tg-token';
 process.env.TELEGRAM_CHAT_ID = '1';
 process.env.GROQ_API_KEY = 'groq-test';
+process.env.OPENROUTER_API_KEY = 'or-test';
 process.env.ALLOWED_ORIGINS = 'http://localhost:3000';
 process.env.GLOBAL_DAILY_LIMIT = '1000';
 for (const k of ['UPSTASH_REDIS_REST_URL', 'KV_REST_API_URL', 'RESEND_API_KEY']) delete process.env[k];
 
-const calls = []; let gemini = 'ok'; let groq = 'ok'; let telegramOk = true;
+const calls = []; let gemini = 'ok'; let groq = 'ok'; let openrouter = 'ok'; let telegramOk = true;
 globalThis.fetch = async (url, opts) => {
   const u = String(url); calls.push(u);
   if (u.includes('generativelanguage')) {
-    if (gemini === 'slowlite' && u.includes('flash-lite')) { const e = new Error('aborted'); e.name = 'AbortError'; throw e; }
+    if (gemini === 'slowlite' && u.includes('3.6-flash')) { const e = new Error('aborted'); e.name = 'AbortError'; throw e; }
     if (gemini === '402') return new Response('{"error":{"code":402,"message":"Your prepayment credits are depleted."}}', { status: 402 });
     if (gemini === '429') return new Response('{}', { status: 429 });
     const payload = {
@@ -21,6 +22,10 @@ globalThis.fetch = async (url, opts) => {
       offtopic: { intent: 'off_topic', reply: '' },
     }[gemini === 'slowlite' ? 'ok' : gemini];
     return new Response(JSON.stringify({ candidates: [{ finishReason: 'STOP', content: { parts: [{ text: JSON.stringify(payload) }] } }] }), { status: 200 });
+  }
+  if (u.includes('openrouter.ai')) {
+    if (openrouter === '429') return new Response('{}', { status: 429 });
+    return new Response(JSON.stringify({ choices: [{ message: { content: JSON.stringify({ intent: 'answer', reply: 'OpenRouter answer about the services.', suggest_handoff: false }) } }] }), { status: 200 });
   }
   if (u.includes('api.groq.com')) {
     if (groq === '429') return new Response('{}', { status: 429 });
@@ -90,7 +95,9 @@ gemini = '402'; before = gemCalls(); r = await msg('Do you offer ongoing mainten
 check('Gemini out of credits (402): Groq answers instead, after only one Gemini call', r.body.reply.includes('Groq answer') && r.body.degraded !== true && gemCalls() === before + 1);
 gemini = 'ok'; groq = 'jsonfail'; r = await msg('Can you automate invoice reminders for my shop?', '1.1.3.05');
 check('Groq model rejects JSON mode: it is retried without it and answers', r.body.reply.includes('Groq answer') && r.body.degraded !== true);
-gemini = '429'; groq = '429'; r = await msg('how much do you charge?', '1.1.3.1');
+gemini = '429'; groq = '429'; openrouter = 'ok'; r = await msg('Can you build a small CRM dashboard for my agency?', '1.1.3.07');
+check('Gemini and Groq both down: OpenRouter answers', r.body.reply.includes('OpenRouter answer') && r.body.degraded !== true);
+gemini = '429'; groq = '429'; openrouter = '429'; r = await msg('how much do you charge?', '1.1.3.1');
 check('Gemini 429 on every model: FAQ answer is returned in limited mode', r.status === 200 && r.body.degraded === true && r.body.reply.includes('$50'));
 check('an alert was sent to Telegram when Gemini failed', calls.some((c) => c.includes('api.telegram.org')));
 before = gemCalls(); r = await msg('what do you think about quantum computing hardware', '1.1.3.2');
